@@ -9,7 +9,12 @@ module.exports = {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    
+    extend: {
+      fontFamily: {
+        logo: ['Playfair Display', "cursive"],
+        font: ['Poppins', "cursive"],
+       },
+    },
   },
   plugins: [],
 }
