@@ -32,17 +32,14 @@ const SideBar = ({ auth }: props) => {
 
   const dispatch = useDispatch();
 
-  const location = usePathname()
-  console.log(location);
+  const location = usePathname();
 
   const inactive = "flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-white";
-const active =
-  "flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-slate-400 ";
+  const active ="flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-slate-400 ";
 
   const handleSearch = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (!search) return;
-
     try {
       const res: any = await getDataAPI(`serch?username=${search}`, auth.token);
       console.log(res);
@@ -53,8 +50,6 @@ const active =
       console.log(err);
     }
   };
-
-  
 
   const fetchRecentChats = async () => {
     try {
@@ -140,7 +135,11 @@ const active =
             }) => (
               <a
                 key={chat.id}
-                className={location === `/chatRoom/${chat.receiverData.id}` ? active : inactive}
+                className={
+                  location === `/chatRoom/${chat.receiverData.id}`
+                    ? active
+                    : inactive
+                }
                 href={`/chatRoom/${chat.receiverData.id}`}
               >
                 <Avatar

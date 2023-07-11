@@ -16,7 +16,7 @@ const UserCard = ({ user, border, children }: props) => {
   return (
     <div
       className={`flex p-2 align-items-center justify-content-between w-100 shadow-md ${border} bg-slate-300 mx-3 z-10 `}
-    >
+    > 
       <div>
         <Link href={`/chatRoom/${id}`} className="flex items-center gap-4">
           <Avatar src={user?.image} size="h-12 w-12 rounded-full " />

@@ -51,7 +51,6 @@ const ChatRoomPage = () => {
   );
 
   const handlesubmit = async () => {
-    // send text to server and clear the input field
     const data = {
       message: text,
       receiver: rid,
