@@ -38,7 +38,6 @@ const JoinRoom = () => {
   };
   const [data, setData] = useState(initialValues);
   const [isSubmit, setIsSubmit] = useState(false);
-
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarURL, setAvatarURL] = useState<string>("");
 
@@ -78,7 +77,7 @@ const JoinRoom = () => {
           position: toast.POSITION.TOP_RIGHT,
         });
         dispatch(login(response));
-        localStorage.setItem("token" ,JSON.stringify(response.data.token))
+        localStorage.setItem("token" , response.data.token)
         router.push("/chatRoom/chat")
       }
     } catch (error) {

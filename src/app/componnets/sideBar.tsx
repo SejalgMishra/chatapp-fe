@@ -1,9 +1,18 @@
 import Avatar from "@/app/componnets/avatar";
-import Button from "@/app/componnets/button";
 import UserCard from "@/app/componnets/serchUserCard";
 import { userDetails } from "@/redux/user/userAction";
 import { getDataAPI } from "@/utilis/api";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import {
+  JSXElementConstructor,
+  Key,
+  PromiseLikeOfReactNode,
+  ReactElement,
+  ReactNode,
+  ReactPortal,
+  useEffect,
+  useState,
+} from "react";
 import { AiOutlineCloseCircle, AiOutlineSearch } from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -14,6 +23,7 @@ interface props {
 const SideBar = ({ auth }: props) => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
+  const [recentChats, setRecentChats] = useState<any>([]);
 
   const handleClose = () => {
     setSearch("");
@@ -21,6 +31,13 @@ const SideBar = ({ auth }: props) => {
   };
 
   const dispatch = useDispatch();
+
+  const location = usePathname()
+  console.log(location);
+
+  const inactive = "flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-white";
+const active =
+  "flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-slate-400 ";
 
   const handleSearch = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
@@ -37,19 +54,33 @@ const SideBar = ({ auth }: props) => {
     }
   };
 
+  
+
+  const fetchRecentChats = async () => {
+    try {
+      const res = await getDataAPI("recent", auth.token);
+      console.log(res);
+      setRecentChats(res);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchRecentChats();
+  }, []);
+
   return (
-    <div className=" bg-slate-900 w-[32%] h-screen">
-        <div className=" m-2 rounded-lg p-2 bg-slate-300 flex">
-        <div className="flex items-center gap-2">
-          <Avatar
-            src={auth?.data?.data?.response?.image}
-            size="h-14 w-14 rounded-full"
-          />
-          <p className="text-lg">
-            Welcome {auth?.data?.data?.response?.username}
-          </p>
-          <div>edit</div>
-        </div>
+    <div className=" bg-slate-900 w-[32%] h-screen ">
+      <div className="flex items-center gap-2 p-2 bg-slate-300 m-2 rounded-lg ">
+        <Avatar
+          src={auth?.data?.data?.response?.image}
+          size="h-14 w-14 rounded-full"
+        />
+        <p className="text-lg">
+          Welcome {auth?.data?.data?.response?.username}
+        </p>
+        <div>edit</div>
       </div>
       <div>
         <form onSubmit={handleSearch}>
@@ -78,6 +109,52 @@ const SideBar = ({ auth }: props) => {
             </button>
           </div>
         </form>
+        <div className="recent-chats mt-8">
+          {recentChats.map(
+            (chat: {
+              id: Key | null | undefined;
+              receiverData: {
+                id: any;
+                image: string;
+                username:
+                  | string
+                  | number
+                  | boolean
+                  | ReactElement<any, string | JSXElementConstructor<any>>
+                  | Iterable<ReactNode>
+                  | ReactPortal
+                  | PromiseLikeOfReactNode
+                  | null
+                  | undefined;
+              };
+              message:
+                | string
+                | number
+                | boolean
+                | ReactElement<any, string | JSXElementConstructor<any>>
+                | Iterable<ReactNode>
+                | ReactPortal
+                | PromiseLikeOfReactNode
+                | null
+                | undefined;
+            }) => (
+              <a
+                key={chat.id}
+                className={location === `/chatRoom/${chat.receiverData.id}` ? active : inactive}
+                href={`/chatRoom/${chat.receiverData.id}`}
+              >
+                <Avatar
+                  src={chat.receiverData.image}
+                  size="h-14 w-14 rounded-full"
+                />
+                <div className="flex  flex-col">
+                  <p>{chat.receiverData.username}</p>
+                  {chat.message && <p>{chat.message}</p>}
+                </div>
+              </a>
+            )
+          )}
+        </div>
       </div>
       <div className="users absolute w-96 mt-1">
         {search &&
@@ -90,7 +167,6 @@ const SideBar = ({ auth }: props) => {
             />
           ))}
       </div>
-      
     </div>
   );
 };
