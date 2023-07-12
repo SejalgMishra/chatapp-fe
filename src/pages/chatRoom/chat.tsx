@@ -4,10 +4,12 @@ import { useSelector } from 'react-redux';
 
 const ChatRoom = () => {
   const auth = useSelector((state) => state.auth);
+  console.log(auth);
+  
 
   return (
     <div>
-        <SideBar auth={auth} />
+        <SideBar auth={auth} classname={"bg-slate-900 lg:w-[32%] h-screen w-full"} />
     </div>
   )
 }

@@ -3,6 +3,7 @@ import UserCard from "@/app/componnets/serchUserCard";
 import { userDetails } from "@/redux/user/userAction";
 import { getDataAPI } from "@/utilis/api";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/router";
 import {
   JSXElementConstructor,
   Key,
@@ -18,9 +19,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 interface props {
   auth: any;
+  classname :string
 }
 
-const SideBar = ({ auth }: props) => {
+const SideBar = ({ auth, classname  }: props) => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [recentChats, setRecentChats] = useState<any>([]);
@@ -30,22 +32,25 @@ const SideBar = ({ auth }: props) => {
     setUsers([]);
   };
 
+
   const dispatch = useDispatch();
 
   const location = usePathname();
 
-  const inactive = "flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-white";
-  const active ="flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-slate-400 ";
+  const router = useRouter()
+
+  const inactive =
+    "flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-white";
+  const active =
+    "flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-slate-400 ";
 
   const handleSearch = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
     if (!search) return;
     try {
       const res: any = await getDataAPI(`serch?username=${search}`, auth.token);
-      console.log(res);
       setUsers(res);
       dispatch(userDetails(res));
-      console.log(users);
     } catch (err) {
       console.log(err);
     }
@@ -53,8 +58,9 @@ const SideBar = ({ auth }: props) => {
 
   const fetchRecentChats = async () => {
     try {
-      const res = await getDataAPI("recent", auth.token);
+      const res = await getDataAPI(`recent/${auth.data.id}`, auth.token);
       console.log(res);
+      
       setRecentChats(res);
     } catch (error) {
       console.log(error);
@@ -66,20 +72,15 @@ const SideBar = ({ auth }: props) => {
   }, []);
 
   return (
-    <div className=" bg-slate-900 w-[32%] h-screen ">
+    <div className={classname}>
       <div className="flex items-center gap-2 p-2 bg-slate-300 m-2 rounded-lg ">
-        <Avatar
-          src={auth?.data?.data?.response?.image}
-          size="h-14 w-14 rounded-full"
-        />
-        <p className="text-lg">
-          Welcome {auth?.data?.data?.response?.username}
-        </p>
+        <Avatar src={auth?.data?.image} size="h-14 w-14 rounded-full" />
+        <p className="text-lg">Welcome {auth?.data?.username}</p>
         <div>edit</div>
       </div>
       <div>
         <form onSubmit={handleSearch}>
-          <div className="flex  w-96 items-center p-2">
+          <div className="flex   items-center p-2">
             <input
               type="text"
               name="search"
@@ -104,7 +105,7 @@ const SideBar = ({ auth }: props) => {
             </button>
           </div>
         </form>
-        <div className="recent-chats mt-8">
+        <div className="mt-8">
           {recentChats.map(
             (chat: {
               id: Key | null | undefined;
@@ -140,13 +141,13 @@ const SideBar = ({ auth }: props) => {
                     ? active
                     : inactive
                 }
-                href={`/chatRoom/${chat.receiverData.id}`}
+                onClick={() => router.push(`/chatRoom/${chat.receiverData.id}`) }
               >
                 <Avatar
                   src={chat.receiverData.image}
                   size="h-14 w-14 rounded-full"
                 />
-                <div className="flex  flex-col">
+                <div className="flex flex-col">
                   <p>{chat.receiverData.username}</p>
                   {chat.message && <p>{chat.message}</p>}
                 </div>

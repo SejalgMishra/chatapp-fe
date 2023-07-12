@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import Button from "@/app/componnets/button";
 import { login } from "@/redux/auth/authAction";
 import { postDataAPI } from "@/utilis/api";
@@ -36,13 +36,13 @@ const JoinRoom = () => {
     email: "",
     image: "",
   };
-  const [data, setData] = useState(initialValues);
-  const [isSubmit, setIsSubmit] = useState(false);
+  const [data, setData] = useState<MyFormValues>(initialValues);
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarURL, setAvatarURL] = useState<string>("");
 
-  const router = useRouter()
-  const dispatch = useDispatch()
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const handleChangeInput = (e: { target: { name: string; value: any } }) => {
     const { name, value } = e.target;
@@ -76,16 +76,13 @@ const JoinRoom = () => {
         toast.success("Successfully logged in !", {
           position: toast.POSITION.TOP_RIGHT,
         });
-        dispatch(login(response));
-        localStorage.setItem("token" , response.data.token)
-        router.push("/chatRoom/chat")
+        router.push("/");
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  
   const ChangeAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
 
@@ -170,11 +167,11 @@ const JoinRoom = () => {
                     className="w-96 border rounded-lg p-1 text-slate-600"
                     onChange={handleChangeInput}
                   />
-                   {errors.username && touched.username ? (
+                  {errors.username && touched.username ? (
                     <p className="text-black bg-red-600">{errors.username}</p>
                   ) : null}
                 </div>
-               
+
                 <div className="flex flex-col">
                   <label htmlFor="username" className="text-xl">
                     Email:
@@ -207,6 +204,15 @@ const JoinRoom = () => {
                   onclick={undefined}
                   disabled={undefined}
                 />
+                <div className="flex gap-1 justify-center">
+                  <p className="font-font">Already Registered?</p>{" "}
+                  <span
+                    className="font-font underline"
+                    onClick={() => router.push("/")}
+                  >
+                    Login
+                  </span>
+                </div>
               </div>
             </form>
           )}
