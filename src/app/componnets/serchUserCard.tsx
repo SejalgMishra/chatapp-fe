@@ -23,7 +23,7 @@ const UserCard = ({ user, border, children }: props) => {
         <a  onClick={() => router.push(`/chatRoom/${user.id}`)} className="flex items-center gap-4" >
           <Avatar src={user?.image} size="h-12 w-12 rounded-full " />
 
-          <div className="ml-1" style={{ transform: "translateY(-2px)" }}>
+          <div className="ml-1" style={{ transform: "translateY(-2px)"}}>
             <span className="d-block">{user.username}</span>
           </div>
         </a>

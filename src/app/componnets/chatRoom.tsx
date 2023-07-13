@@ -18,9 +18,9 @@ const ChatRoom = ({ user, sentByCurrentUser , msg , id }: Props) => {
 
   return (
     <div className={`flex items-center gap-3 mr-7 ${messageContainerClass}`}>
-      {!sentByCurrentUser && <Avatar src={avatarSrc} size="h-10 w-10 rounded-full" />}
+      {!sentByCurrentUser && <Avatar src={avatarSrc} size="h-10 w-10 rounded-full" /> }
       <p className={messageClass}>{msg}</p>
-      {sentByCurrentUser && <Avatar src={avatarSrc} size="h-10 w-10 rounded-full" />}
+      {sentByCurrentUser && <Avatar src={avatarSrc} size="h-10 w-10 rounded-full" /> }
     </div>
   );
 };

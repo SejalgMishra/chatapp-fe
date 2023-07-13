@@ -10,12 +10,19 @@ import { getDataAPI, postDataAPI } from "@/utilis/api";
 import { usePathname } from "next/navigation";
 import { log } from "util";
 import { Data } from "emoji-mart";
+import { getMessage, postmsg } from "@/redux/chat/chatAction";
 
 const ChatRoomPage = () => {
   const router = useRouter();
   const { id } = router.query;
 
   const auth = useSelector((state) => state.auth);
+
+  const msg = useSelector((state) => state.msg);
+
+  console.log(msg);
+
+  const dispatch = useDispatch();
 
   const user = useSelector((state) => state.user.serchUserDetails);
   const [users, setUser] = useState<any>([]);
@@ -32,21 +39,31 @@ const ChatRoomPage = () => {
 
   const dataId = dataa?.receiverData.id;
 
+  console.log(rid, "rid");
+
+  console.log(dataId, "dataId");
+
+  console.log(auth.data.id, "auth.data.id");
+
   const token: any = localStorage.getItem("token");
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<any>([]);
 
   const fetchdata = async () => {
-    const message = await getDataAPI(
-      `message/${rid ? rid : dataId }?userId=${auth.data.id}`,
+    const res = await getDataAPI(
+      `message/${rid ? rid : dataId}?userId=${auth.data.id}`,
       token
     );
-    setMessages(message);
+
+    console.log(res);
+    dispatch(getMessage(res));
   };
 
   const userDetails = async () => {
     const res = await getDataAPI(`recent/${auth.data.id}`, auth.token);
-    setUser(res);
+    console.log(res , "hghfgff");
+    
+    setUser(res.filteredChats);
   };
 
   useEffect(() => {
@@ -54,12 +71,12 @@ const ChatRoomPage = () => {
     userDetails();
   }, []);
 
-  const filtermsg = messages.filter(
-    (x: {
-      receiver: string | string[] | undefined;
-      userId: string | string[] | undefined;
-    }) => (x?.receiver == id && x.userId == auth.data.id) || x.userId == id
-  );
+  const filtermsg = msg?.data?.filter((x) => {
+    return (
+      (x.receiver === id && x.userId === auth.data.id) ||
+      (x.userId === id && x.receiver === auth.data.id)
+    );
+  });
 
   const handlesubmit = async () => {
     const data = {
@@ -67,10 +84,13 @@ const ChatRoomPage = () => {
       receiver: rid ? rid : dataId,
       token,
     };
+    if (data.message === "") {
+      return;
+    }
     try {
       const res = await postDataAPI(`message/${auth?.data.id}`, data, token);
       console.log(res);
-      fetchdata();
+      dispatch(postmsg(res));
       setText("");
     } catch (error) {
       console.log(error);
@@ -86,8 +106,9 @@ const ChatRoomPage = () => {
       <div className="w-full h-screen flex flex-col ">
         <Header user={reciverId ? reciverId : dataa?.receiverData} />
 
+
         <div className="flex flex-col overflow-y-scroll no-scrollbar">
-          {filtermsg.map(
+          {filtermsg?.map(
             (
               message: { userId: any; message: any },
               index: Key | null | undefined

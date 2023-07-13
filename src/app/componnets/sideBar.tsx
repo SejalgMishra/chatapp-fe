@@ -19,10 +19,10 @@ import { useDispatch, useSelector } from "react-redux";
 
 interface props {
   auth: any;
-  classname :string
+  classname: string;
 }
 
-const SideBar = ({ auth, classname  }: props) => {
+const SideBar = ({ auth, classname }: props) => {
   const [search, setSearch] = useState("");
   const [users, setUsers] = useState([]);
   const [recentChats, setRecentChats] = useState<any>([]);
@@ -32,12 +32,11 @@ const SideBar = ({ auth, classname  }: props) => {
     setUsers([]);
   };
 
-
   const dispatch = useDispatch();
 
   const location = usePathname();
 
-  const router = useRouter()
+  const router = useRouter();
 
   const inactive =
     "flex  font-[cursive] items-center gap-2 rounded-full m-2 p-1 bg-white";
@@ -60,12 +59,14 @@ const SideBar = ({ auth, classname  }: props) => {
     try {
       const res = await getDataAPI(`recent/${auth.data.id}`, auth.token);
       console.log(res);
-      
-      setRecentChats(res);
+      setRecentChats(res.filteredChats);
     } catch (error) {
       console.log(error);
     }
   };
+
+  console.log(recentChats);
+  
 
   useEffect(() => {
     fetchRecentChats();
@@ -100,7 +101,7 @@ const SideBar = ({ auth, classname  }: props) => {
                 onClick={handleClose}
               />
             ) : null}
-            <button className="bg-slate-300 text-white text-base p-3   rounded-full flex items-center">
+            <button className="bg-slate-300 text-white text-base p-3 rounded-full flex items-center">
               <AiOutlineSearch className="text-slate-900" />
             </button>
           </div>
@@ -141,7 +142,7 @@ const SideBar = ({ auth, classname  }: props) => {
                     ? active
                     : inactive
                 }
-                onClick={() => router.push(`/chatRoom/${chat.receiverData.id}`) }
+                onClick={() => (router.push(`/chatRoom/${chat.receiverData.id}`))}
               >
                 <Avatar
                   src={chat.receiverData.image}

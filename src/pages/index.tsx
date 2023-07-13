@@ -108,7 +108,7 @@ export default function Home() {
               />
             </div>
             <div className="flex gap-1">
-              <p className="font-font">not Registered?</p> <span className="font-font underline" onClick={()=>router.push("/join")}>Register</span>
+              <p className="font-font">Not Registered?</p> <span className="font-font underline" onClick={()=>router.push("/join")}>Register</span>
             </div>
           </form>
         )}
