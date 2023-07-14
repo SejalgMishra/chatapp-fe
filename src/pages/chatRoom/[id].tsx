@@ -20,6 +20,8 @@ const ChatRoomPage = () => {
 
   const msg = useSelector((state) => state.msg);
 
+  
+
   console.log(msg);
 
   const dispatch = useDispatch();
@@ -105,8 +107,7 @@ const ChatRoomPage = () => {
       />
       <div className="w-full h-screen flex flex-col ">
         <Header user={reciverId ? reciverId : dataa?.receiverData} />
-
-
+        
         <div className="flex flex-col overflow-y-scroll no-scrollbar">
           {filtermsg?.map(
             (

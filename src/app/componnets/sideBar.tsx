@@ -1,5 +1,6 @@
 import Avatar from "@/app/componnets/avatar";
 import UserCard from "@/app/componnets/serchUserCard";
+import { getGroup } from "@/redux/group/groupAction";
 import { userDetails } from "@/redux/user/userAction";
 import { getDataAPI } from "@/utilis/api";
 import { usePathname } from "next/navigation";
@@ -14,7 +15,11 @@ import {
   useEffect,
   useState,
 } from "react";
-import { AiOutlineCloseCircle, AiOutlineSearch } from "react-icons/ai";
+import {
+  AiOutlineCloseCircle,
+  AiOutlineSearch,
+  AiOutlineUsergroupAdd,
+} from "react-icons/ai";
 import { useDispatch, useSelector } from "react-redux";
 
 interface props {
@@ -31,6 +36,7 @@ const SideBar = ({ auth, classname }: props) => {
     setSearch("");
     setUsers([]);
   };
+  const grp = useSelector((state) => state.grp.data);
 
   const dispatch = useDispatch();
 
@@ -65,11 +71,19 @@ const SideBar = ({ auth, classname }: props) => {
     }
   };
 
-  console.log(recentChats);
-  
+  const fetchGroup = async () => {
+    try {
+      const res = await getDataAPI(`group/${auth.data.id}`, auth.token);
+      console.log(res);
+      dispatch(getGroup(res));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     fetchRecentChats();
+    fetchGroup();
   }, []);
 
   return (
@@ -81,14 +95,14 @@ const SideBar = ({ auth, classname }: props) => {
       </div>
       <div>
         <form onSubmit={handleSearch}>
-          <div className="flex   items-center p-2">
+          <div className="flex   items-center p-2 gap-2">
             <input
               type="text"
               name="search"
               value={search}
               id="search"
               title="Enter to Search"
-              className="px-4 p-1 w-96 mx-1 border-b-2 outline-none relative "
+              className="px-4 p-1 w-96 mx-1 border-b-2 outline-none relative rounded-full "
               onChange={(e) =>
                 setSearch(e.target.value.toLowerCase().replace(/ /g, ""))
               }
@@ -97,16 +111,47 @@ const SideBar = ({ auth, classname }: props) => {
             {search ? (
               <AiOutlineCloseCircle
                 size={20}
-                className="absolute left-[15%] text-slate-600 my-3"
+                className="absolute left-[16%] text-slate-600 my-3"
                 onClick={handleClose}
               />
             ) : null}
             <button className="bg-slate-300 text-white text-base p-3 rounded-full flex items-center">
               <AiOutlineSearch className="text-slate-900" />
             </button>
+            <button className="bg-slate-300 text-white text-xl p-3 rounded-full flex items-center" onClick={() => router.push("/group")}>
+              <AiOutlineUsergroupAdd className="text-slate-900" />
+            </button>
           </div>
         </form>
-        <div className="mt-8">
+        <div>
+          <p className="text-center font-font text-lg text-white">
+            Your Groups
+          </p>
+          {grp.length > 0
+            ? grp.map((x) => (
+                <div
+                  className="bg-white m-2 rounded-full p-2 flex justify-between"
+                  onClick={() => router.push(`/chat/${x.id}`)}
+                  key={x.id}
+                >
+                  <div className="overflow-hidden">
+                  <p className="font-[cursive]">{x.name}</p>
+                  <p className="flex gap-1 ">{x.users.map((x)=> (
+                    <span className="font-[cursive]">{x.username}{","}</span>
+                  ))}</p>
+                  </div>
+                  <p className="flex items-center gap-1 mr-4 font-font">
+                    {x.userId.length}{" "}
+                    <AiOutlineUsergroupAdd className="text-slate-900" />
+                  </p>
+                </div>
+              ))
+            : null}
+        </div>
+        <div>
+        <p className="text-center font-font text-lg text-white">
+            Your Chats
+          </p>
           {recentChats.map(
             (chat: {
               id: Key | null | undefined;
@@ -142,7 +187,7 @@ const SideBar = ({ auth, classname }: props) => {
                     ? active
                     : inactive
                 }
-                onClick={() => (router.push(`/chatRoom/${chat.receiverData.id}`))}
+                onClick={() => router.push(`/chatRoom/${chat.receiverData.id}`)}
               >
                 <Avatar
                   src={chat.receiverData.image}
@@ -157,7 +202,7 @@ const SideBar = ({ auth, classname }: props) => {
           )}
         </div>
       </div>
-      <div className="users absolute w-96 mt-1">
+      <div className="users absolute w-96 mt-1 top-36 z-10">
         {search &&
           users?.map((user) => (
             <UserCard

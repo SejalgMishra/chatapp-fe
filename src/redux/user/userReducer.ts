@@ -6,7 +6,8 @@ interface AuthState {
 
 const initialState: AuthState = {
   serchUserDetails: [],
-  recentUser : []
+  recentUser : [],
+  allUser : []
 };
 
 const userReducer = (state = initialState, action: any): AuthState => {
@@ -18,6 +19,10 @@ const userReducer = (state = initialState, action: any): AuthState => {
       case TYPES.RECENT_USERS:
       return {
         recentUser : [...state.recentUser , action.payload]
+      };
+      case TYPES.ALL_USERS:
+      return {
+        allUser :  action.payload
       };
     
     default:

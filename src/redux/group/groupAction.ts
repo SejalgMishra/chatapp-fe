@@ -1,11 +1,12 @@
 export const TYPES = {
-    MESSAGE : "MESSAGE",
-    POST_MESSAGE : "POST_MESSAGE"
+    GROUP : "GROUP",
+    POST_GROUP_MESSAGE : "POST_GROUP_MESSAGE",
+    GET_GROUP_MESSAGE : "GET_GROUP_MESSAGE"
   };
 
-  export const getMessage = (Data: any) => {
+  export const getGroup = (Data: any) => {
     return {
-      type: "MESSAGE",
+      type: "GROUP",
       payload: Data,
     };
   };
